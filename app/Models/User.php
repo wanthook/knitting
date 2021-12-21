@@ -61,11 +61,11 @@ class User extends Authenticatable
 
     public function modules()
     {
-        return $this->belongsToMany('App\Module');
+        return $this->belongsToMany(Module::class);
     }
     
     public function type()
     {
-        return $this->belongsTo('App\MasterOption', 'type_id');
+        return $this->belongsTo(MasterOption::class, 'type_id');
     }
 }

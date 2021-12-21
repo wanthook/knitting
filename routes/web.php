@@ -46,6 +46,20 @@ Route::prefix('administrator')->group(function () {
         Route::post('delete', [App\Http\Controllers\ModuleController::class, 'destroy'])
             ->name('moduledelete');
     });
-});
 
-Route::get('/test', [App\Http\Controllers\HomeController::class, 'index'])->name('homie');
+    Route::prefix('users')->group(function () {
+        Route::get('list', [App\Http\Controllers\Auth\RegisterController::class, 'index'])
+             ->name('userlist');
+        Route::post('table', [App\Http\Controllers\Auth\RegisterController::class, 'dt'])
+             ->name('usertable');
+        Route::post('select', [App\Http\Controllers\Auth\RegisterController::class, 'select'])
+             ->name('userselect');
+        Route::post('save', [App\Http\Controllers\Auth\RegisterController::class, 'store'])
+            ->name('usersave');
+        Route::post('delete', [App\Http\Controllers\Auth\RegisterController::class, 'destroy'])
+            ->name('userdelete');
+        
+        Route::post('tipe', [App\Http\Controllers\MasterOptionController::class, 'selectTypeUser'])
+            ->name('usertipe');
+    });
+});
