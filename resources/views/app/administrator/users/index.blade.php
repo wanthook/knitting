@@ -1,197 +1,119 @@
-@extends('adminlte3.app')
+@extends('adminlte::page')
 
-@section('title_page')
-<p>Administrator User</p>
-@endsection
+@section('title', 'User')
 
+@section('content_header')
+    <h1>User</h1>
+@stop
 
-@section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{route('dashboard')}}">Beranda</a></li>
-<li class="breadcrumb-item active">Administrator User</li>
-@endsection
+@section('content')
+<div class="modal fade" id="modal-form">
+    <div class="modal-dialog">
+        <div class="modal-content bg-secondary">
+            <div class="modal-header">
+                <h4 class="modal-title">Form User</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="form_data" action="{{route('usersave')}}" accept-charset="UTF-8" >
+                {{csrf_field()}}
+                <input type="hidden" name="id" id="id">
+                <div class="modal-body">            
+                    <div class="row">
+                        <div class="col-12">                                
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control form-control-sm" id="username" name="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Nama</label>
+                                <input type="text" class="form-control form-control-sm" id="name" name="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control form-control-sm" id="password" name="password" placeholder="Password">
+                                <input type="password" class="form-control form-control-sm" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">E-mail</label>
+                                <input type="text" class="form-control form-control-sm" id="email" name="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="type_id">Tipe User</label>
+                                <select name="type_id" id="type_id" class="form-control form-control-sm select2" style="width:100%"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="module">Module</label>
+                                <select name="module[]" multiple="multiple" id="module" class="form-control form-control-sm select2" style="width:100%"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" id="cmdModalClose" class="btn btn-outline-light" data-dismiss="modal">Keluar</button>
+                    <button type="submit" id="cmdModalSave" class="btn btn-outline-light">Simpan</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-4">
+                <div class="form-group">                                        
+                    <span class="label label-default">Username/Nama</span>
+                    <input id="sSearch" class="form-control form-control-sm" name="sSearch" type="text">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-primary" id="sCmd"><i class="fa fa-search"></i>&nbsp;Cari</button>
+                    <button class="btn btn-sm btn-success" alt="Tambah" data-toggle="modal" data-target="#modal-form"><i class="fa fa-plus-circle"></i>&nbsp;Tambah</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.card-header -->
+        <div class="card-body">  
+            <table id="tables" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        @php
+                        $lstTbl = ['tusername' => 'Username', 
+                        'tnama' => 'Nama', 
+                        'temail' => 'Email',
+                        'ttype' => 'Tipe User'];
+                        
+                        foreach($lstTbl as $k => $v)
+                        {
+                            echo '<th class="'.$k.'">'.$v.'</th>';
+                        }
+                        @endphp
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    <!-- /.card-body -->
+</div>
+@stop
 
-@section('add_css')
-    <!-- Datatables -->
-    <link rel="stylesheet" href="{{asset('bower_components/admin-lte/plugins/datatables/dataTables.bootstrap4.min.css')}}">
-    <!-- select2 -->
-    <link rel="stylesheet" href="{{asset('bower_components/admin-lte/plugins/select2/css/select2.min.css')}}">
-@endsection
-
-@section('add_js')
-    <!-- Datatables -->
-    <script src="{{asset('bower_components/admin-lte/plugins/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('bower_components/admin-lte/plugins/datatables/dataTables.bootstrap4.min.js')}}"></script>
-    <!-- select2 -->
-    <script src="{{asset('bower_components/admin-lte/plugins/select2/js/select2.full.min.js')}}"></script>
-    
+@section('js')    
     <script>
-        var dTable = null;
+        var tables = null;
         $(function(e)
         {
-            let Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
-            });
-            
-            var toastOverlay = Swal.mixin({
-                position: 'center',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                allowEnterKey: false,
-                showConfirmButton: false
-            });
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
             
-            $('#cmdSearch').on('click',function(e)
-            {
-                dTable.ajax.reload();
-            });
-            
-            $('#form_data').submit( function(e)
-            {
-                e.preventDefault();
-                const data = $(this).serialize();
-                
-                $.ajax(
-                {
-                    url         : $(this).attr('action'),
-                    dataType    : 'json',
-                    type        : 'POST',
-                    data        : $('#form_data').serialize() ,
-                    success(result,status,xhr)
-                    {
-                        if(result.status == 1)
-                        {
-                            document.getElementById("form_data").reset(); 
-                            
-                            Toast.fire({
-                                type: 'success',
-                                title: result.msg
-                            });
-                        }
-                        else
-                        {
-                            if(Array.isArray(result.msg))
-                            {
-                                var str = "";
-                                for(var i = 0 ; i < result.msg.length ; i++ )
-                                {
-                                    str += result.msg[i]+"<br>";
-                                }
-                                Toast.fire({
-                                    type: 'error',
-                                    title: str
-                                });
-                            }
-                            
-                        }
-                        dTable.ajax.reload();
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) { 
-                        /* implementation goes here */ 
-                        console.log(jqXHR.responseText);
-                    }
-                    
-                });
-                
-                return false;
-            });
-            
-            $('#modal-form').on('hidden.bs.modal', function (e) 
-            {
-                document.getElementById("form_data").reset(); 
-                dTable.ajax.reload();
-            });
-            
-            $('#type_id').select2({
-                placeholder: "",
-                allowClear: true,
-                minimumInputLength: 0,
-                delay: 250,
-                ajax: {
-                    url: "{{route('seladminuserparent')}}",
-                    dataType    : 'json',
-                    type : 'post',
-                    data: function (params) 
-                    {
-                        var query = {
-                            q: params.term
-                        }
-                        
-                        return query;
-                    },
-                    processResults: function (data) 
-                    {
-                        return {
-                            results: data.items
-                        };
-                    },
-                    cache: true
-                }
-            });
-            
-            $('#module').select2({
-                placeholder: "",
-                allowClear: true,
-                minimumInputLength: 0,
-                delay: 250,
-                ajax: {
-                    url: "{{route('seladminmoduletree')}}",
-                    dataType    : 'json',
-                    type : 'post',
-                    data: function (params) 
-                    {
-                        var query = {
-                            q: params.term
-                        }
-                        
-                        return query;
-                    },
-                    processResults: function (data) 
-                    {
-                        return {
-                            results: data.items
-                        };
-                    },
-                    cache: true
-                }
-            });
-            
-            $('#perusahaan_id').select2({
-                placeholder: "",
-                allowClear: true,
-                minimumInputLength: 0,
-                delay: 250,
-                ajax: {
-                    url: "{{route('selperusahaan')}}",
-                    dataType    : 'json',
-                    type : 'post',
-                    data: function (params) 
-                    {
-                        var query = {
-                            q: params.term
-                        }
-                        
-                        return query;
-                    },
-                    processResults: function (data) 
-                    {
-                        return {
-                            results: data.items
-                        };
-                    },
-                    cache: true
-                }
-            });
-            
-            dTable = $('#dTable').DataTable({
+            tables = $('#tables').DataTable({
                 "sPaginationType": "full_numbers",
                 "searching":false,
                 "ordering": true,
@@ -202,11 +124,11 @@
                 "lengthMenu": [100, 500, 1000, 1500, 2000 ],
                 "ajax":
                 {
-                    "url"       : "{{ route('dtadminuser') }}",
+                    "url"       : "{{ route('usertable') }}",
                     "type"      : 'POST',
                     data: function (d) 
                     {
-                        d.search     = $('#txtSearch').val();
+                        d.search     = $('#sSearch').val();
                     }
                 },
                 "columnDefs"    :[
@@ -231,32 +153,61 @@
                 },
                 {
                         targets : 'ttype',
-                        data: "type.nama"
-                },
-                {
-                        targets : 'tperusahaan',
-                        data: "perusahaan.kode"
+                        data: "type.kode"
                 }]
             });
-            $('#dTable tbody').on('click', '.btndelete', function () 
+
+            $('#tables tbody').on('click', '.btnedit', function () 
             {
                 var tr = $(this).closest('tr');
-                var row = dTable.row( tr );
+                var row = tables.row( tr );
+                var datas = row.data();
+                
+                $('#id').val(datas.id);
+                $('#username').val(datas.username);
+                $('#name').val(datas.name);
+                $('#email').val(datas.email);
+
+                var newOption = new Option(datas.type.kode, datas.type.id, false, false);
+                $('#type_id').append(newOption).trigger('change');
+
+                var $mod = $('#module');
+                var $grp = [];
+                $.each(datas.modules, function(key, val)
+                {
+                    if(val.parent_id == null)
+                    {
+                        $grp = $('<optgroup label="' + val.nama + '" />');
+                        $mod.append($grp);
+                    }
+                    else
+                    {
+                        var newOption = new Option(val.nama, val.id, false, true);
+                        $grp.append(newOption);
+                    }
+                });
+                $mod.trigger('change');
+                
+            });
+            
+            $('#tables tbody').on('click', '.btndelete', function () 
+            {
+                var tr = $(this).closest('tr');
+                var row = tables.row( tr );
                 var datas = row.data();
                 
                 if(confirm('Apakah Anda yakin menghapus data ini?'))
                 {
                     $.ajax(
                     {
-                        url         : '{{route("deleteadminuser")}}',
+                        url         : '{{route("userdelete")}}',
                         dataType    : 'JSON',
                         type        : 'POST',
                         data        : {sId : datas.id} ,
                         beforeSend  : function(xhr)
                         {
-    //                        $('#loadingDialog').modal('show');
                             toastOverlay.fire({
-                                type: 'warning',
+                                icon: 'warning',
                                 title: 'Sedang memproses hapus data',
                                 onBeforeOpen: () => {
                                     Swal.showLoading();
@@ -265,11 +216,10 @@
                         },
                         success(result,status,xhr)
                         {
-                            toastOverlay.close();
                             if(result.status == 1)
                             {
                                 Toast.fire({
-                                    type: 'success',
+                                    icon: 'success',
                                     title: result.msg
                                 });
                             }
@@ -283,14 +233,13 @@
                                         str += result.msg[i]+"<br>";
                                     }
                                     Toast.fire({
-                                        type: 'error',
+                                        icon: 'error',
                                         title: str
                                     });
-                                    $('#tipe_exim').attr('disabled','disabled');
                                 }
 
                             }
-                            dTable.ajax.reload();
+                            tables.ajax.reload();
                         },                        
                         error: function(jqXHR, textStatus, errorThrown) { 
                             /* implementation goes here */ 
@@ -302,162 +251,134 @@
                     return false;
                 }
             });
-            $('#dTable tbody').on('click', '.btnedit', function () 
+
+            $('#sCmd').on('click', function(e)
             {
-                var tr = $(this).closest('tr');
-                var row = dTable.row( tr );
-                var datas = row.data();
+                tables.ajax.reload()
+            });
+            
+            $('#form_data').submit( function(e)
+            {
+                e.preventDefault();
+                const data = $(this).serialize();
                 
-                $('#id').val(datas.id);
-                $('#username').val(datas.username);
-                $('#name').val(datas.name);
-                $('#email').val(datas.email);
-                                
-                var newOption = new Option(datas.type.nama, datas.type.id, false, false);
-                $('#type_id').append(newOption).trigger('change');
-                
-                var newOption = new Option(datas.perusahaan.kode+' - '+datas.perusahaan.deskripsi, datas.perusahaan.id, false, false);
-                $('#perusahaan_id').append(newOption).trigger('change');
-                
-                var $mod = $('#module');
-                var $grp = [];
-                $.each(datas.modules, function(key, val)
+                $.ajax(
                 {
-//                    console.log(key)
-                    if(val.parent_id == null)
+                    url         : $(this).attr('action'),
+                    dataType    : 'json',
+                    type        : 'POST',
+                    data        : data ,
+                    success(result,status,xhr)
                     {
-                        $grp = $('<optgroup label="' + val.nama + '" />');
-                        $mod.append($grp);
+                        if(result.status == 1)
+                        {
+                            reset();
+                            
+                            Toast.fire({
+                                icon: 'success',
+                                title: result.msg
+                            });
+                        }
+                        else
+                        {
+                            if(Array.isArray(result.msg))
+                            {
+                                var str = "";
+                                for(var i = 0 ; i < result.msg.length ; i++ )
+                                {
+                                    str += result.msg[i]+"<br>";
+                                }
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: str
+                                });
+                            }
+                            else
+                            {
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: result.msg
+                                });
+                            }
+                            
+                        }
+                        tables.ajax.reload();
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) { 
+                        /* implementation goes here */                        
+                        console.log(jqXHR.responseText);
                     }
-                    else
-                    {
-                        var newOption = new Option(val.nama, val.id, false, true);
-                        $grp.append(newOption);
-//                        $('<option />').html(this.name).appendTo(group);
-                    }
+                    
                 });
-                $mod.trigger('change');
-//                console.log($grp);
                 
+                return false;
+            });
+            
+            $('#modal-form').on('hidden.bs.modal', function (e) 
+            {
+                reset();
+            });
+            
+            $('#module').select2({
+                placeholder: "",
+                allowClear: true,
+                minimumInputLength: 0,
+                delay: 250,
+                ajax: {
+                    url: "{{route('moduleselecttree')}}",
+                    dataType    : 'json',
+                    type : 'post',
+                    data: function (params) 
+                    {
+                        var query = {
+                            q: params.term
+                        }
+                        
+                        return query;
+                    },
+                    processResults: function (data) 
+                    {
+                        return {
+                            results: data.items
+                        };
+                    },
+                    cache: true
+                }
+            });
+            
+            $('#type_id').select2({
+                placeholder: "",
+                allowClear: true,
+                minimumInputLength: 0,
+                delay: 250,
+                ajax: {
+                    url: "{{route('usertipe')}}",
+                    dataType    : 'json',
+                    type : 'post',
+                    data: function (params) 
+                    {
+                        var query = {
+                            q: params.term
+                        }
+                        
+                        return query;
+                    },
+                    processResults: function (data) 
+                    {
+                        return {
+                            results: data.items
+                        };
+                    },
+                    cache: true
+                }
             });
         });
+
+        function reset()
+        {
+            document.getElementById("form_data").reset(); 
+            $('#parent_id').val("").trigger('change');
+            tables.ajax.reload();
+        }
     </script>
-@endsection
-
-@section('modal_form')
-<div class="modal fade" id="modal-form">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content bg-secondary">
-            <div class="modal-header">
-            <h4 class="modal-title">Form User</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <form id="form_data" action="{{route('saveadminuser')}}" accept-charset="UTF-8" >
-            {{csrf_field()}}
-            <input type="hidden" name="id" id="id">
-            <div class="modal-body">
-            <div class="row">
-                <div class="col-12">                                
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control form-control-sm" id="username" name="username">
-                    </div>
-                    <div class="form-group">
-                        <label for="name">Nama</label>
-                        <input type="text" class="form-control form-control-sm" id="name" name="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control form-control-sm" id="password" name="password" placeholder="Password">
-                        <input type="password" class="form-control form-control-sm" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input type="text" class="form-control form-control-sm" id="email" name="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="type_id">Tipe User</label>
-                        <select name="type_id" id="type_id" class="form-control form-control-sm select2" style="width:100%"></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="perusahaan_id">Perusahaan</label>
-                        <select name="perusahaan_id" id="perusahaan_id" class="form-control form-control-sm select2" style="width:100%"></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="module">Module</label>
-                        <select name="module[]" multiple="multiple" id="module" class="form-control form-control-sm select2" style="width:100%"></select>
-                    </div>
-                </div>
-            </div>
-            </div>
-        <div class="modal-footer justify-content-between">
-            <button type="button" id="cmdModalClose" class="btn btn-outline-light" data-dismiss="modal">Keluar</button>
-            <button type="submit" id="cmdModalSave" class="btn btn-outline-light">Simpan</button>
-        </div>
-        </form>
-    </div>
-    <!-- /.modal-content -->
-</div>
-    <!-- /.modal-dialog -->
-</div>
-@endsection
-
-@section('content')
-<div class="card bg-gradient-primary collapsed-card">
-    <div class="card-header">
-        <h5 class="card-title"><i class=" fas fa-search"></i>&nbsp;Pencarian</h5>
-        <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
-        </div>
-    </div>
-    <div class="card-body">
-        <form role="form">
-            {{csrf_field()}}
-            <div class="form-group">
-                <label for="txtSearch">Kode / Nama</label>
-                <input type="text" class="form-control" name="txtSearch" id="txtSearch" placeholder="Kode/Nama">                  
-            </div>
-        </form>
-    </div>
-    <div class="card-footer">
-        <button class="btn btn-primary" id="cmdSearch"><i class=" fas fa-search"></i>&nbsp;Cari</button>
-    </div>
-</div>
-<div class="card card-primary card-outline">
-    <div class="card-header">
-        <h5 class="card-title">&nbsp;</h5>
-        <div class="card-tools">
-            <button class="btn btn-xs btn-success" alt="Tambah" data-toggle="modal" data-target="#modal-form"><i class="fa fa-plus-circle"></i>&nbsp;Tambah</button>
-        </div>
-    </div>
-<!--    <div class="card-header">
-      <h5 class="m-0">Featured</h5>
-    </div>-->
-    <!-- /.card-header -->
-        <div class="card-body">  
-            <table id="dTable" class="table table-hover">
-                <thead>
-                    <tr>
-                        <th></th>
-                        @php
-                        $lstTbl = ['tusername' => 'Username', 
-                        'tnama' => 'Nama', 
-                        'temail' => 'Email',
-                        'ttype' => 'Tipe User',
-                        'tperusahaan' => 'Perusahaan'];
-                        
-                        foreach($lstTbl as $k => $v)
-                        {
-                            echo '<th class="'.$k.'">'.$v.'</th>';
-                        }
-                        @endphp
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    <!-- /.card-body -->
-</div>
-
-@endsection
+@stop

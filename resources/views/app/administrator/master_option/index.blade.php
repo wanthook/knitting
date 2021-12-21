@@ -210,7 +210,7 @@
                         beforeSend  : function(xhr)
                         {
                             toastOverlay.fire({
-                                type: 'warning',
+                                icon: 'warning',
                                 title: 'Sedang memproses hapus data',
                                 onBeforeOpen: () => {
                                     Swal.showLoading();
@@ -223,7 +223,7 @@
                             if(result.status == 1)
                             {
                                 Toast.fire({
-                                    type: 'success',
+                                    icon: 'success',
                                     title: result.msg
                                 });
                             }
@@ -238,7 +238,7 @@
                                     }
 
                                     Toast.fire({
-                                        type: 'error',
+                                        icon: 'error',
                                         title: str
                                     });
                                 }
@@ -285,7 +285,7 @@
                             document.getElementById("form_data").reset(); 
                             
                             Toast.fire({
-                                type: 'success',
+                                icon: 'success',
                                 title: result.msg
                             });
                         }
@@ -299,7 +299,7 @@
                                     str += result.msg[i]+"<br>";
                                 }
                                 Toast.fire({
-                                    type: 'error',
+                                    icon: 'error',
                                     title: str
                                 });
                             }

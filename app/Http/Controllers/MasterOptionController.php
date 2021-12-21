@@ -192,6 +192,11 @@ class MasterOptionController extends Controller
                 ->make(true);
     }
 
+    public function selectTypeUser(Request $request)
+    {
+        return response()->json($this->select2($request, 'USERTYPE'), 200);
+    }
+
     public function selectCountry(Request $request)
     {
         return response()->json($this->select2($request, 'COUNTRY'), 200);
@@ -258,7 +263,7 @@ class MasterOptionController extends Controller
         $formatted_tags = [];
 
         foreach ($tags as $tag) {
-            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->nama];
+            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->kode];
         }
 
         return array('items' => $formatted_tags);

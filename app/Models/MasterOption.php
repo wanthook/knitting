@@ -81,11 +81,11 @@ class MasterOption extends Model
     
     public function createdBy()
     {
-        return $this->belongsTo('App\Models\User','created_by');
+        return $this->belongsTo(User::class,'created_by');
     }
     
     public function updatedBy()
     {
-        return $this->belongsTo('App\Models\User','updated_by');
+        return $this->belongsTo(User::class,'updated_by');
     }
 }
