@@ -383,6 +383,31 @@ return [
                 ],
             ],
         ],
+        'Pace' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/bs-custom-file-input/bs-custom-file-input.min.js',
+                ],
+            ],
+        ],
+        'Custom' => [
+            'active' => true,
+            'files' => [
+                // [
+                //     'type' => 'css',
+                //     'asset' => false,
+                //     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-center-radar.min.css',
+                // ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/custom/knitting.js',
+                ],
+            ],
+        ],
     ],
 
     /*
