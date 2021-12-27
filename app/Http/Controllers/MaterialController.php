@@ -197,6 +197,8 @@ class MaterialController extends Controller
                         }
                     }
 
+                    if(!$sD[$arrKey->material]) continue;
+
                     $mrp    = MasterOption::where('kode', $sD[$arrKey->mrp])->where('tipe', 'MRPGROUP')->first();
                     $mtyp   = MasterOption::where('kode', $sD[$arrKey->mtyp])->where('tipe', 'MATTYPE')->first();
                     $matl   = MasterOption::where('kode', $sD[$arrKey->matl])->where('tipe', 'MATGROUP')->first();
@@ -346,6 +348,22 @@ class MaterialController extends Controller
         return  Datatables::of($datas)
                 ->editColumn('id', '{{$id}}')
                 ->make(true);
+    }
+    
+    public function select(Request $request)
+    {
+        $tags = null;
+        
+        $term = trim($request->input('q'));
+        $tags = Material::where('kode','like', '%'.$term.'%')->limit(50)->get();
+
+        $formatted_tags = [];
+
+        foreach ($tags as $tag) {
+            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->kode];
+        }
+
+        return response()->json(array('items' => $formatted_tags), 200);
     }
 
 }

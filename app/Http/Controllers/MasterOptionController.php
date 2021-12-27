@@ -236,6 +236,11 @@ class MasterOptionController extends Controller
     {
         return response()->json($this->select2($request, 'ACCGROUP'), 200);
     }
+
+    public function selectWc(Request $request)
+    {
+        return response()->json($this->select2($request, 'WC'), 200);
+    }
     
     public function selectTipe(Request $request)
     {
@@ -268,7 +273,7 @@ class MasterOptionController extends Controller
         $formatted_tags = [];
 
         foreach ($tags as $tag) {
-            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->kode];
+            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->kode, 'deskripsi' => $tag->deskripsi];
         }
 
         return array('items' => $formatted_tags);
