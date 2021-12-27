@@ -231,6 +231,11 @@ class MasterOptionController extends Controller
     {
         return response()->json($this->select2($request, 'VALCL'), 200);
     }
+
+    public function selectGroup(Request $request)
+    {
+        return response()->json($this->select2($request, 'ACCGROUP'), 200);
+    }
     
     public function selectTipe(Request $request)
     {
