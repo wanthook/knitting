@@ -24,12 +24,12 @@ class Customer extends Model
         'jalan1',
         'jalan2',
         'country_id',
-        'group_id', 
-        'created_by',
-        'updated_by', 
+        'group_id',        
+        'deleted_at',
+        'created_by', 
         'created_at',
-        'updated_at',
-        'deleted_at'
+        'updated_by', 
+        'updated_at'
     ];
     
     /**
@@ -46,7 +46,7 @@ class Customer extends Model
 
     public function country()
     {
-        return $this->belongsTo(MasterOption::class, 'country_id')->where('tipe','COUNTRY');
+        return $this->belongsTo(MasterOption::class, 'country_id')->where('type','COUNTRY');
     }
 
     public function group()

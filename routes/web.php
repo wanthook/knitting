@@ -34,17 +34,19 @@ Route::middleware(['auth'])->group(function () {
                Route::post('select-mrp', [App\Http\Controllers\MasterOptionController::class, 'selectMrpGroup'])
                     ->name('masteroptionselectmrp');
                Route::post('select-mtype', [App\Http\Controllers\MasterOptionController::class, 'selectMatType'])
-               ->name('masteroptionselectmtype');
+                    ->name('masteroptionselectmtype');
                Route::post('select-mgroup', [App\Http\Controllers\MasterOptionController::class, 'selectMatGroup'])
-               ->name('masteroptionselectmgroup');
+                    ->name('masteroptionselectmgroup');
                Route::post('select-bunit', [App\Http\Controllers\MasterOptionController::class, 'selectBUnit'])
-               ->name('masteroptionselectbunit');
+                    ->name('masteroptionselectbunit');
                Route::post('select-valcl', [App\Http\Controllers\MasterOptionController::class, 'selectValCl'])
-               ->name('masteroptionselectvalcl');
+                    ->name('masteroptionselectvalcl');
                Route::post('select-country', [App\Http\Controllers\MasterOptionController::class, 'selectCountry'])
-               ->name('masteroptionselectcountry');
+                    ->name('masteroptionselectcountry');
                Route::post('select-group', [App\Http\Controllers\MasterOptionController::class, 'selectGroup'])
-               ->name('masteroptionselectgroup');
+                    ->name('masteroptionselectgroup');
+               Route::post('select-workcenter', [App\Http\Controllers\MasterOptionController::class, 'selectWc'])
+                    ->name('masteroptionselectwc');
           });
 
           Route::prefix('module')->group(function () {
@@ -85,7 +87,7 @@ Route::middleware(['auth'])->group(function () {
                ->name('materiallist');
                Route::post('table', [App\Http\Controllers\MaterialController::class, 'dt'])
                ->name('materialtable');
-               Route::post('select-tipe', [App\Http\Controllers\MaterialController::class, 'selectTipe'])
+               Route::post('select', [App\Http\Controllers\MaterialController::class, 'select'])
                ->name('materialselect');
                Route::post('save', [App\Http\Controllers\MaterialController::class, 'store'])
                ->name('materialsave');
@@ -109,6 +111,22 @@ Route::middleware(['auth'])->group(function () {
                Route::post('delete', [App\Http\Controllers\CustomerController::class, 'destroy'])
                ->name('customerdelete');
           });
+          
+          Route::prefix('mesin')->group(function () {
+               Route::get('list', [App\Http\Controllers\MesinController::class, 'index'])
+               ->name('mesinlist');
+               Route::post('table', [App\Http\Controllers\MesinController::class, 'dt'])
+               ->name('mesintable');
+               Route::post('select', [App\Http\Controllers\MesinController::class, 'select'])
+               ->name('mesinselect');
+               Route::post('save', [App\Http\Controllers\MesinController::class, 'store'])
+               ->name('mesinsave');
+               Route::post('upload', [App\Http\Controllers\MesinController::class, 'storeUpload'])
+               ->name('mesinupload');
+               Route::post('delete', [App\Http\Controllers\MesinController::class, 'destroy'])
+               ->name('mesindelete');
+          });
+     
      });
 
      Route::get('files/{kode}', ['as' => 'app.files', function ($kode)
@@ -121,6 +139,9 @@ Route::middleware(['auth'])->group(function () {
                     break;
                case "file_template_customer":
                     $path = storage_path('app').'/public/template_customer.xlsx';
+                    break;
+               case "file_template_mesin":
+                    $path = storage_path('app').'/public/template_mesin.xlsx';
                     break;
           }
           if($path)
