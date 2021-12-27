@@ -41,6 +41,10 @@ Route::middleware(['auth'])->group(function () {
                ->name('masteroptionselectbunit');
                Route::post('select-valcl', [App\Http\Controllers\MasterOptionController::class, 'selectValCl'])
                ->name('masteroptionselectvalcl');
+               Route::post('select-country', [App\Http\Controllers\MasterOptionController::class, 'selectCountry'])
+               ->name('masteroptionselectcountry');
+               Route::post('select-group', [App\Http\Controllers\MasterOptionController::class, 'selectGroup'])
+               ->name('masteroptionselectgroup');
           });
 
           Route::prefix('module')->group(function () {
@@ -90,7 +94,21 @@ Route::middleware(['auth'])->group(function () {
                Route::post('delete', [App\Http\Controllers\MaterialController::class, 'destroy'])
                ->name('materialdelete');
           });
-     
+
+           Route::prefix('customer')->group(function () {
+               Route::get('list', [App\Http\Controllers\CustomerController::class, 'index'])
+               ->name('customerlist');
+               Route::post('table', [App\Http\Controllers\CustomerController::class, 'dt'])
+               ->name('customertable');
+               Route::post('select', [App\Http\Controllers\CustomerController::class, 'select'])
+               ->name('customerselect');
+               Route::post('save', [App\Http\Controllers\CustomerController::class, 'store'])
+               ->name('customersave');
+               Route::post('upload', [App\Http\Controllers\CustomerController::class, 'storeUpload'])
+               ->name('customerupload');
+               Route::post('delete', [App\Http\Controllers\CustomerController::class, 'destroy'])
+               ->name('customerdelete');
+          });
      });
 
      Route::get('files/{kode}', ['as' => 'app.files', function ($kode)
@@ -100,6 +118,9 @@ Route::middleware(['auth'])->group(function () {
           {
                case "file_template_material":
                     $path = storage_path('app').'/public/template_material.xlsx';
+                    break;
+               case "file_template_customer":
+                    $path = storage_path('app').'/public/template_customer.xlsx';
                     break;
           }
           if($path)
@@ -112,4 +133,6 @@ Route::middleware(['auth'])->group(function () {
                return abort(404);
           }
      }]);
+
+
 });
