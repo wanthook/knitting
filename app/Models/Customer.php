@@ -46,7 +46,7 @@ class Customer extends Model
 
     public function country()
     {
-        return $this->belongsTo(MasterOption::class, 'country_id')->where('type','COUNTRY');
+        return $this->belongsTo(MasterOption::class, 'country_id')->where('tipe','COUNTRY');
     }
 
     public function group()
