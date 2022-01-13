@@ -348,7 +348,7 @@ class CustomerController extends Controller
         $formatted_tags = [];
 
         foreach ($tags as $tag) {
-            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->kode];
+            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->kode, 'nama' => $tag->nama1];
         }
 
         return response()->json(array('items' => $formatted_tags), 200);

@@ -129,6 +129,33 @@ Route::middleware(['auth'])->group(function () {
      
      });
 
+     Route::prefix('transaksi')->group(function () {
+          Route::prefix('spk-rajut')->group(function () {
+               Route::get('list', [App\Http\Controllers\SpkRajutController::class, 'index'])
+                    ->name('spkrajutlist');
+               Route::get('edit-form/{id}', [App\Http\Controllers\SpkRajutController::class, 'edit'])
+                    ->name('spkrajutedit');
+               Route::get('add', [App\Http\Controllers\SpkRajutController::class, 'create'])
+                    ->name('spkrajutadd');
+               Route::post('table', [App\Http\Controllers\SpkRajutController::class, 'dt'])
+                    ->name('spkrajuttable');
+               Route::post('table-detail', [App\Http\Controllers\SpkRajutController::class, 'dtDetail'])
+                    ->name('spkrajuttabledetail');
+               Route::post('select', [App\Http\Controllers\SpkRajutController::class, 'select'])
+                    ->name('spkrajutselect');
+               Route::post('save', [App\Http\Controllers\SpkRajutController::class, 'store'])
+                    ->name('spkrajutsave');
+               Route::post('save-detail', [App\Http\Controllers\SpkRajutController::class, 'storeDetail'])
+                    ->name('spkrajutsavedetail');
+               Route::post('upload', [App\Http\Controllers\SpkRajutController::class, 'storeUpload'])
+                    ->name('spkrajutupload');
+               Route::post('delete', [App\Http\Controllers\SpkRajutController::class, 'destroy'])
+                    ->name('spkrajutdelete');
+               Route::post('delete-detail', [App\Http\Controllers\SpkRajutController::class, 'destroyDetail'])
+                    ->name('spkrajutdeletedetail');
+          });
+     });
+
      Route::get('files/{kode}', ['as' => 'app.files', function ($kode)
      {
           $path = "";

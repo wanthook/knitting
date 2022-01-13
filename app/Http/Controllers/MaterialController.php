@@ -360,7 +360,10 @@ class MaterialController extends Controller
         $formatted_tags = [];
 
         foreach ($tags as $tag) {
-            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->kode];
+            $formatted_tags[] = ['id' => $tag->id, 
+                                 'text' => $tag->kode, 
+                                 'deskripsi' => $tag->deskripsi, 
+                                 'mrp' => ['id' => $tag->mrp->id, 'kode' => $tag->mrp->kode, 'deskripsi' => $tag->mrp->deskripsi]];
         }
 
         return response()->json(array('items' => $formatted_tags), 200);
