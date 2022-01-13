@@ -334,7 +334,7 @@ class MesinController extends Controller
         $formatted_tags = [];
 
         foreach ($tags as $tag) {
-            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->merek.' - '.$tag->proses];
+            $formatted_tags[] = ['id' => $tag->id, 'text' => $tag->merek.' - '.$tag->proses, 'deskripsi' => $tag->deskripsi, 'merek' => $tag->merek, 'proses' => $tag->proses];
         }
 
         return response()->json(array('items' => $formatted_tags), 200);

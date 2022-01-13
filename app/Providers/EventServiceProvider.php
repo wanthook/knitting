@@ -32,7 +32,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
-            
+                        
             $mod = Module::whereHas('users',function($q)
             {
                 $q->where('users.id',Auth::user()->id);
