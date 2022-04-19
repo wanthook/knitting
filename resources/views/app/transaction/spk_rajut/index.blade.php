@@ -7,6 +7,46 @@
 @stop
 
 @section('content')
+<div class="modal fade" id="modal-form-status">
+    <div class="modal-dialog">
+        <div class="modal-content bg-secondary">
+            <div class="modal-header">
+                <h4 class="modal-title"><i class="fa fa-clipboard-check"></i>&nbsp;Form Update Status</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="form_data_upload" action="" accept-charset="UTF-8" enctype="multipart/form-data">
+            {{csrf_field()}}
+            <div class="modal-body">   
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="kode">File</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="formUpload" name="formUpload">
+                                        <label class="custom-file-label" for="formUpload">Choose file</label>
+                                    </div>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="cmdUpload">Upload</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="col-12">
+                            <a class="btn btn-info btn-xs" href="{{route('app.files', 'file_template_spkrajut')}}" target="_blank"><i class="fa fa-download"></i>Template Document</a>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 <div class="modal fade" id="modal-form-upload">
     <div class="modal-dialog">
         <div class="modal-content bg-secondary">
@@ -72,7 +112,7 @@
                 <div class="btn-group">
                     <button class="btn btn-sm btn-primary" id="sCmd"><i class="fa fa-search"></i>&nbsp;Cari</button>
                     <a class="btn btn-sm btn-success" alt="Tambah" href="{{route('spkrajutadd')}}"><i class="fa fa-plus-circle"></i>&nbsp;Tambah</a>
-                    <button class="btn btn-sm btn-warning" alt="Upload" data-toggle="modal" data-target="#modal-form-upload"><i class="fa fa-file-upload"></i>&nbsp;Upload</button>
+                    <!-- <button class="btn btn-sm btn-warning" alt="Upload" data-toggle="modal" data-target="#modal-form-upload"><i class="fa fa-file-upload"></i>&nbsp;Upload</button> -->
                 </div>
             </div>
         </div>
@@ -147,7 +187,11 @@
                     "className":      'btndel',
                     "orderable":      false,
                     "data"     :           null,
-                    "defaultContent": '<div class="btn-group"><button class="btn btn-sm btn-primary btnedit" data-toggle="modal" data-target="#modal-form"><i class="fa fa-edit"></i></button><button class="btn btn-sm btn-danger btndelete"><i class="fa fa-eraser"></i></button></div>'
+                    "defaultContent": '<div class="btn-group">'+
+                                        '<button class="btn btn-sm btn-primary btnedit" data-toggle="modal" data-target="#modal-form"><i class="fa fa-edit"></i></button>'+
+                                        '<button class="btn btn-sm btn-success btneditstatus" data-toggle="modal" data-target="#modal-form-status"><i class="fa fa-clipboard-check"></i></button>'+
+                                        '<button class="btn btn-sm btn-danger btndelete"><i class="fa fa-eraser"></i></button>'+
+                                        '</div>'
                 },
                 {
                         targets : 'tspk',
@@ -188,16 +232,18 @@
                 }]
             });
 
-            $('#tables tbody').on('click', '.btnedit', function () 
+            $('#tables tbody').on('click', '.btneditstatus', function () 
             {
                 var tr = $(this).closest('tr');
                 var row = tables.row( tr );
                 var datas = row.data();
                 
-                window.location = "{{route('spkrajutedit', '')}}/"+datas.id;
+                // window.location = "{{route('spkrajutedit', '')}}/"+datas.id;
 
                 
             });
+
+ 
             
             $('#tables tbody').on('click', '.btndelete', function () 
             {

@@ -224,7 +224,7 @@ class MasterOptionController extends Controller
 
     public function selectMatGroup(Request $request)
     {
-        return response()->json($this->select2($request, 'BUNIT'), 200);
+        return response()->json($this->select2($request, 'MATGROUP'), 200);
     }
 
     public function selectValCl(Request $request)

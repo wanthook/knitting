@@ -95,6 +95,12 @@ Route::middleware(['auth'])->group(function () {
                ->name('materialupload');
                Route::post('delete', [App\Http\Controllers\MaterialController::class, 'destroy'])
                ->name('materialdelete');
+
+               Route::get('download/{id}', [App\Http\Controllers\MaterialController::class, 'download'])
+               ->name('materialdownload');
+
+               Route::post('table-upload', [App\Http\Controllers\MaterialController::class, 'dtUpload'])
+               ->name('materialtableupload');
           });
 
            Route::prefix('customer')->group(function () {

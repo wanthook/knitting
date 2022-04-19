@@ -31,24 +31,20 @@
                                 <input type="text" class="form-control form-control-sm" id="deskripsi" name="deskripsi">
                             </div>
                             <div class="form-group">
-                                <label for="mrp_id">MRP Group</label>
-                                <select name="mrp_id" id="mrp_id" class="form-control form-control-sm select2" style="width:100%"></select>
-                            </div>
-                            <div class="form-group">
                                 <label for="mtype_id">Material Type</label>
                                 <select name="mtype_id" id="mtype_id" class="form-control form-control-sm select2" style="width:100%"></select>
                             </div>
                             <div class="form-group">
-                                <label for="mgroup_id">Matl Group</label>
-                                <select name="mgroup_id" id="mgroup_id" class="form-control form-control-sm select2" style="width:100%"></select>
+                                <label for="plant">Plant</label>
+                                <input type="text" class="form-control form-control-sm" id="plant" name="plant" value="1300" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="bunit_id">Base Unit</label>
                                 <select name="bunit_id" id="bunit_id" class="form-control form-control-sm select2" style="width:100%"></select>
                             </div>
                             <div class="form-group">
-                                <label for="valcl_id">ValCl</label>
-                                <select name="valcl_id" id="valcl_id" class="form-control form-control-sm select2" style="width:100%"></select>
+                                <label for="mgroup_id">Matl Group</label>
+                                <select name="mgroup_id" id="mgroup_id" class="form-control form-control-sm select2" style="width:100%"></select>
                             </div>
                         </div>
                     </div>
@@ -103,51 +99,72 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<div class="card card-primary card-outline">
-    <div class="card-header">
-        <div class="row">
-            <div class="col-4">
-                <div class="form-group">                                        
-                    <span class="label label-default">Material / Deskripsi</span>
-                    <input id="sSearch" class="form-control form-control-sm" name="sSearch" type="text">
-                </div>
+<div class="card card-primary card-tabs">
+    <div class="card-header p-0 pt-1">
+        <ul class="nav nav-tabs" id="tab-material" role="tablist">
+            <!-- <li class="pt-2 px-3"><h3 class="card-title">Master Material</h3></li> -->
+            <li class="nav-item">
+                <a class="nav-link active" id="material-list-tab" data-toggle="pill" href="#material-list" role="tab" aria-controls="material-list" aria-selected="true">Material List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="upload-list-tab" data-toggle="pill" href="#upload-list" role="tab" aria-controls="upload-list" aria-selected="false">Download For SAP</a>
+            </li>
+        </ul>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">  
+        <div class="tab-content" id="tab-materialContent">
+            <div class="tab-pane fade show active" id="material-list" role="tabpanel" aria-labelledby="material-list-tab">
+                <table id="tables" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            @php
+                            $lstTbl = [
+                                'tmaterial' => 'Material', 
+                                'tdeskripsi' => 'Deskripsi', 
+                                'tplant' => 'Plant',
+                                'tmtyp' => 'MTyp', 
+                                'tmatl' => 'Matl Group', 
+                                'tbun' => 'BUn'
+                            ];
+                            
+                            foreach($lstTbl as $k => $v)
+                            {
+                                echo '<th class="'.$k.'">'.$v.'</th>';
+                            }
+                            @endphp
+                        </tr>
+                    </thead>
+                </table>
             </div>
-            <div class="col-3">
-                <div class="btn-group">
-                    <button class="btn btn-sm btn-primary" id="sCmd"><i class="fa fa-search"></i>&nbsp;Cari</button>
-                    <button class="btn btn-sm btn-success" alt="Tambah" data-toggle="modal" data-target="#modal-form"><i class="fa fa-plus-circle"></i>&nbsp;Tambah</button>
+            <div class="tab-pane fade show active" id="upload-list" role="tabpanel" aria-labelledby="upload-list-tab">
+                <div class="btn-group float-right">
+                    <!-- <button class="btn btn-sm btn-primary" id="sCmd"><i class="fa fa-search"></i>&nbsp;Cari</button> -->
+                    <!-- <button class="btn btn-sm btn-success" alt="Tambah" data-toggle="modal" data-target="#modal-form"><i class="fa fa-plus-circle"></i>&nbsp;Tambah</button> -->
                     <button class="btn btn-sm btn-warning" alt="Upload" data-toggle="modal" data-target="#modal-form-upload"><i class="fa fa-file-upload"></i>&nbsp;Upload</button>
                 </div>
+                <table id="tables-upload" class="table table-hover">
+                    <thead>
+                        <tr>
+                            @php
+                            $lstTbl = [
+                                'taction' => '',
+                                'tunamafile' => 'Nama File', 
+                                'tujumlahdata' => 'Jumlah Data'
+                            ];
+                            
+                            foreach($lstTbl as $k => $v)
+                            {
+                                echo '<th class="'.$k.'">'.$v.'</th>';
+                            }
+                            @endphp
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
-    <!-- /.card-header -->
-        <div class="card-body">  
-            <table id="tables" class="table table-hover">
-                <thead>
-                    <tr>
-                        <th></th>
-                        @php
-                        $lstTbl = [
-                            'tmaterial' => 'Material', 
-                            'tdeskripsi' => 'Deskripsi', 
-                            'tmrp' => 'MRP Group', 
-                            'tmrpdes' => 'MRP Deskripsi', 
-                            'tmtyp' => 'MTyp', 
-                            'tmatl' => 'Matl Group', 
-                            'tbun' => 'BUn', 
-                            'tvalcl' => 'ValCl'
-                        ];
-                        
-                        foreach($lstTbl as $k => $v)
-                        {
-                            echo '<th class="'.$k.'">'.$v.'</th>';
-                        }
-                        @endphp
-                    </tr>
-                </thead>
-            </table>
-        </div>
     <!-- /.card-body -->
 </div>
 @stop
@@ -155,6 +172,7 @@
 @section('js')    
     <script>
         var tables = null;
+        var tablesUpload = null;
         $(function(e)
         {
             bsCustomFileInput.init();
@@ -173,6 +191,7 @@
                 "processing": true,
                 "serverSide": true,
                 "autoWidth": false,
+                "scrollX": true,
                 "lengthMenu": [100, 500, 1000, 1500, 2000 ],
                 "ajax":
                 {
@@ -200,12 +219,8 @@
                         data: "deskripsi"
                 },
                 {
-                        targets : 'tmrp',
-                        data: "mrp.kode"
-                },
-                {
-                        targets : 'tmrpdes',
-                        data: "mrp.deskripsi"
+                        targets : 'tplant',
+                        data: "plant"
                 },
                 {
                         targets : 'tmtyp',
@@ -218,10 +233,40 @@
                 {
                         targets : 'tbun',
                         data: "bunit.kode"
+                }]
+            });
+            
+            tablesUpload = $('#tables-upload').DataTable({
+                "sPaginationType": "full_numbers",
+                "searching":false,
+                "ordering": true,
+                "deferRender": true,
+                "processing": true,
+                "serverSide": true,
+                "autoWidth": false,
+                "scrollX": true,
+                "lengthMenu": [100, 500, 1000, 1500, 2000 ],
+                "ajax":
+                {
+                    "url"       : "{{ route('materialtableupload') }}",
+                    "type"      : 'POST',
+                    data: function (d) 
+                    {
+                        d.search     = $('#sSearch').val();
+                    }
+                },
+                "columnDefs"    :[
+                {
+                        targets : 'taction',
+                        data: "action"
                 },
                 {
-                        targets : 'tvalcl',
-                        data: "valcl.kode"
+                        targets : 'tunamafile',
+                        data: "nama_file"
+                },
+                {
+                        targets : 'tujumlahdata',
+                        data: "jumlah_data"
                 }]
             });
 
@@ -234,9 +279,7 @@
                 $('#id').val(datas.id);
                 $('#kode').val(datas.kode);
                 $('#deskripsi').val(datas.deskripsi);
-
-                var newOption = new Option(datas.mrp.kode, datas.mrp.id, false, false);
-                $('#mrp_id').append(newOption).trigger('change');
+                $('#plant').val(datas.plant);
 
                 var newOption = new Option(datas.mtype.kode, datas.mtype.id, false, false);
                 $('#mtype_id').append(newOption).trigger('change');
@@ -246,10 +289,6 @@
 
                 var newOption = new Option(datas.bunit.kode, datas.bunit.id, false, false);
                 $('#bunit_id').append(newOption).trigger('change');
-
-                var newOption = new Option(datas.valcl.kode, datas.valcl.id, false, false);
-                $('#valcl_id').append(newOption).trigger('change');
-
                 
             });
             
@@ -439,33 +478,6 @@
                 reset();
             });
             
-            $('#mrp_id').select2({
-                placeholder: "",
-                allowClear: true,
-                minimumInputLength: 0,
-                delay: 250,
-                ajax: {
-                    url: "{{route('masteroptionselectmrp')}}",
-                    dataType    : 'json',
-                    type : 'post',
-                    data: function (params) 
-                    {
-                        var query = {
-                            q: params.term
-                        }
-                        
-                        return query;
-                    },
-                    processResults: function (data) 
-                    {
-                        return {
-                            results: data.items
-                        };
-                    },
-                    cache: true
-                }
-            });
-            
             $('#mtype_id').select2({
                 placeholder: "",
                 allowClear: true,
@@ -546,43 +558,14 @@
                     cache: true
                 }
             });
-            
-            $('#valcl_id').select2({
-                placeholder: "",
-                allowClear: true,
-                minimumInputLength: 0,
-                delay: 250,
-                ajax: {
-                    url: "{{route('masteroptionselectvalcl')}}",
-                    dataType    : 'json',
-                    type : 'post',
-                    data: function (params) 
-                    {
-                        var query = {
-                            q: params.term
-                        }
-                        
-                        return query;
-                    },
-                    processResults: function (data) 
-                    {
-                        return {
-                            results: data.items
-                        };
-                    },
-                    cache: true
-                }
-            });
         });
 
         function reset()
         {
             document.getElementById("form_data").reset(); 
-            $('#mrp_id').val("").trigger('change');
             $('#mtype_id').val("").trigger('change');
             $('#mgroup_id').val("").trigger('change');
             $('#bunit_id').val("").trigger('change');
-            $('#valcl_id').val("").trigger('change');
             tables.ajax.reload();
         }
     </script>
