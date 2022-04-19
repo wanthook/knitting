@@ -9,23 +9,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 use DateTimeInterface;
 
-class Material extends Model
+class MaterialUpload extends Model
 {
     use HasFactory;
     use SoftDeletes;
     
-    protected $table = 'materials';
+    protected $table = 'material_upload';
     
     protected $fillable = [
-        'kode',
-        'deskripsi', 
-        'plant',  
-        // 'mrp_id',
-        'mtype_id',
-        'mgroup_id',
-        'bunit_id',
-        // 'valcl_id',
-        'upload_id',
+        'nama_file',
+        'jumlah_data',   
         'deleted_at',
         'created_by', 
         'created_at',
@@ -45,29 +38,9 @@ class Material extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function mrp()
+    public function material()
     {
-        return $this->belongsTo(MasterOption::class, 'mrp_id')->where('tipe','MRPGROUP');
-    }
-
-    public function mtype()
-    {
-        return $this->belongsTo(MasterOption::class, 'mtype_id')->where('tipe','MATTYPE');
-    }
-
-    public function mgroup()
-    {
-        return $this->belongsTo(MasterOption::class, 'mgroup_id')->where('tipe','MATGROUP');
-    }
-
-    public function bunit()
-    {
-        return $this->belongsTo(MasterOption::class, 'bunit_id')->where('tipe','BUNIT');
-    }
-
-    public function valcl()
-    {
-        return $this->belongsTo(MasterOption::class, 'valcl_id')->where('tipe','VALCL');
+        return $this->hasMany(Material::class, 'upload_id');
     }
     
     public function createdby()

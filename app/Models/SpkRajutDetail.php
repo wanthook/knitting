@@ -59,8 +59,6 @@ class SpkRajutDetail extends Model
         return $this->belongsTo(Material::class, 'material_raw_id');
     }
 
-
-
     public function spk()
     {
         return $this->belongsTo(SpkRajut::class, 'spk_rajut_id');

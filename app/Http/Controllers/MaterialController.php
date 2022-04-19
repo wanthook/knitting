@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Material;
+use App\Models\MaterialUpload;
 use App\Models\MasterOption;
 
 use Carbon\Carbon;
@@ -51,20 +52,18 @@ class MaterialController extends Controller
             [
                 'kode'   => 'required',
                 'deskripsi'      => 'required',
-                'mrp_id'      => 'required',
+                'plant'      => 'required',
                 'mtype_id'      => 'required',
                 'mgroup_id'      => 'required',
                 'bunit_id'      => 'required',
-                'valcl_id'      => 'required',
             ],
             [
                 'kode.required'  => 'Kode harus diisi.',
                 'deskripsi.required'     => 'Deskripsi harus diisi.',
-                'mrp_id.required'     => 'MRP Group harus diisi.',
+                'plant.required'     => 'Plant harus diisi.',
                 'mtype_id.required'     => 'Material Type harus diisi.',
                 'mgroup_id.required'     => 'Matl Group harus diisi.',
                 'bunit_id.required'     => 'Base Unit harus diisi.',
-                'valcl_id.required'     => 'ValCl harus diisi.',
             ]);
 
             if($validation->fails())
@@ -143,6 +142,8 @@ class MaterialController extends Controller
                 $req = $request->all();
                 
                 $fileVar = $req['formUpload'];
+
+                $fileName = $fileVar->getClientOriginalName();
                                 
                 $sheetData = [];
                 
@@ -162,7 +163,16 @@ class MaterialController extends Controller
                     $sheetData = $spreadsheet->getActiveSheet()->toArray();
                 }
                 
-                $x = 0;    
+                $x = 0;   
+                $tData = 0;
+                
+                $matUpload = MaterialUpload::create([
+                    'nama_file' => $fileName,
+                    'jumlah_data' => $tData,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id
+                ]);
+
                 $arrKey = null;
                 
                 foreach($sheetData as $sD)
@@ -199,23 +209,27 @@ class MaterialController extends Controller
 
                     if(!$sD[$arrKey->material]) continue;
 
-                    $mrp    = MasterOption::where('kode', $sD[$arrKey->mrp])->where('tipe', 'MRPGROUP')->first();
+                    $tData++;
+
+                    // $mrp    = MasterOption::where('kode', $sD[$arrKey->mrp])->where('tipe', 'MRPGROUP')->first();
                     $mtyp   = MasterOption::where('kode', $sD[$arrKey->mtyp])->where('tipe', 'MATTYPE')->first();
                     $matl   = MasterOption::where('kode', $sD[$arrKey->matl])->where('tipe', 'MATGROUP')->first();
                     $bun    = MasterOption::where('kode', $sD[$arrKey->bun])->where('tipe', 'BUNIT')->first();
-                    $valcl  = MasterOption::where('kode', $sD[$arrKey->valcl])->where('tipe', 'VALCL')->first();
+                    // $valcl  = MasterOption::where('kode', $sD[$arrKey->valcl])->where('tipe', 'VALCL')->first();
                                         
                     $arrData = [
                         'kode' => $sD[$arrKey->material],
                         'deskripsi' => $sD[$arrKey->deskripsi],
+                        'upload_id' => $matUpload->id,
+                        'plant' => 1300,
                         'updated_by' => Auth::user()->id
                     ];
 
-                    if($mrp) $arrData['mrp_id'] = $mrp->id; else continue;
+                    // if($mrp) $arrData['mrp_id'] = $mrp->id; else continue;
                     if($mtyp) $arrData['mtype_id'] = $mtyp->id; else continue;
                     if($matl) $arrData['mgroup_id'] = $matl->id; else continue;
                     if($bun) $arrData['bunit_id'] = $bun->id; else continue;
-                    if($valcl) $arrData['valcl_id'] = $valcl->id; else continue;
+                    // if($valcl) $arrData['valcl_id'] = $valcl->id; else continue;
 
                     $prev = Material::where('kode', $sD[$arrKey->material])->first();
 
@@ -229,6 +243,8 @@ class MaterialController extends Controller
                         Material::create($arrData);
                     }
                 }
+
+                MaterialUpload::find($matUpload->id)->fill(['jumlah_data' => $tData])->save();
                 
                 DB::commit();
                 return response()->json(['status' => 1,
@@ -274,6 +290,125 @@ class MaterialController extends Controller
     public function update(Request $request, MasterOption $masterOption)
     {
         //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function download($ids)
+    {
+       try 
+        {
+            $downloadFile = MaterialUpload::find($ids);
+
+            if(!$downloadFile)
+                return response()->json(array(
+                    "status" => 0,
+                    "msg"   => "Data gagal didownload."
+                ));
+
+            $strDownload = "";
+            $arrFile = [];
+            foreach($downloadFile->material()->get() as $valMat)
+            {
+                $mtype = json_decode($valMat->mtype->warna);
+
+                $arr = [
+                    $valMat->kode,
+                    'T',
+                    $valMat->mtype->kode,
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    'X',
+                    $valMat->deskripsi,
+                    $valMat->plant,
+                    $valMat->mtype->nilai,
+                    '1000',
+                    '00',
+                    $valMat->bunit->kode,
+                    $valMat->mgroup->kode,
+                    '',
+                    '02',
+                    '001',
+                    '',
+                    'PD',
+                    '231',
+                    '1310',
+                    'EX',
+                    '0',
+                    '0',
+                    'KP',
+                    '000',
+                    '',
+                    '',
+                    'E',
+                    '',
+                    '',
+                    '',
+                    'M',
+                    'S',
+                    '0',
+                    '0',
+                    '1',
+                    $mtype->val,
+                    $valMat->plant,
+                    'MWST',
+                    '1',
+                    'MWSS',
+                    '1',
+                    '',
+                    '1',
+                    'NORM',
+                    'NORM',
+                    '01',
+                    '2KM',
+                    '2ZZ',
+                    '2ZZ',
+                    '',
+                    '',
+                    '',
+                    '',
+                    $mtype->cost,
+                    '',
+                    '',
+                    ''
+
+                ];
+                $arrFile[] = implode("\t",$arr);
+            }
+
+            $fileName = 'SAP_'.Carbon::now()->format('dmYHis').'.txt';
+            $content = implode("\r\n",$arrFile);
+
+            $headers = [
+                'Content-type' => 'text/plain', 
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
+                'Content-Length' => 0
+            ];
+            
+              return response()->make($content, 200, $headers);
+        } 
+        catch (QueryException $ex) 
+        {
+            return response()->json(array(
+               "status" => 0,
+                "msg"   => "Data gagal didownload."
+            ));
+        }
     }
 
     /**
@@ -347,6 +482,31 @@ class MaterialController extends Controller
         
         return  Datatables::of($datas)
                 ->editColumn('id', '{{$id}}')
+                ->make(true);
+    }
+    
+    public function dtUpload(Request $request)
+    {
+        $req    = $request->all();
+        
+        $datas   = MaterialUpload::with('createdby', 'updatedby');  
+        
+        if(!empty($req['search']))
+        {
+            $datas->where('nama_file', 'like',str_replace('*','%',$req['search']));
+        }
+
+        $datas->orderBy('id','asc');
+        
+        return  Datatables::of($datas)
+                ->editColumn('id', '{{$id}}')
+                ->addColumn('action',function($datas){
+                    $str = '';
+
+                    $str .= '<a class="btn btn-success btn-sm" target="_blank" href="'.route('materialdownload', $datas->id).'"><i class="fa fa-download"></i></a>';
+
+                    return $str;
+                })
                 ->make(true);
     }
     
